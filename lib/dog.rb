@@ -25,6 +25,38 @@ class Dog
 
     DB[:conn].execute(sql)
   end
+  
+  def self.new_from_db(row)
+    attributes_hash = {
+      :id => row[0],
+      :name => row[1],
+      :breed => row[2]
+    }
+    self.new(attributes_hash)
+  end
+  
+  def self.find_by_name(name)
+    sql = <<-SQL
+      SELECT * 
+      FROM dogs 
+      WHERE name = ?
+    SQL
+
+    DB[:conn].execute(sql, name).map do |row|
+      self.new_from_db(row)
+    end.first
+  end
+
+  def update
+    sql = <<-SQL
+      UPDATE dogs 
+      SET name = ?, breed = ? 
+      WHERE id = ?
+      SQL
+
+      DB[:conn].execute(sql, self.name, self.breed, self.id)
+    end
+  end
 
   def save
     sql = <<-SQL
@@ -56,15 +88,6 @@ class Dog
     end.first
   end
 
-  def self.new_from_db(row)
-    attributes_hash = {
-      :id => row[0],
-      :name => row[1],
-      :breed => row[2]
-    }
-    self.new(attributes_hash)
-  end
-
   def self.find_or_create_by(name:, breed:)
     sql = <<-SQL
       SELECT * 
@@ -83,26 +106,3 @@ class Dog
       end
       new_dog
   end
-
-  def self.find_by_name(name)
-    sql = <<-SQL
-      SELECT * 
-      FROM dogs 
-      WHERE name = ?
-    SQL
-
-    DB[:conn].execute(sql, name).map do |row|
-      self.new_from_db(row)
-    end.first
-  end
-
-  def update
-    sql = <<-SQL
-      UPDATE dogs 
-      SET name = ?, breed = ? 
-      WHERE id = ?
-      SQL
-
-      DB[:conn].execute(sql, self.name, self.breed, self.id)
-  end
-end
