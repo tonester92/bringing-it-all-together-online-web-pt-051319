@@ -46,7 +46,9 @@ class Dog
 
   def self.find_by_id(id)
     sql = <<-SQL
-      SELECT * FROM dogs WHERE id = ?
+      SELECT * 
+      FROM dogs 
+      WHERE id = ?
     SQL
 
     DB[:conn].execute(sql, id).map do |row|
@@ -65,7 +67,8 @@ class Dog
 
   def self.find_or_create_by(name:, breed:)
     sql = <<-SQL
-      SELECT * FROM dogs
+      SELECT * 
+      FROM dogs
       WHERE name = ? AND breed = ?
       SQL
 
@@ -82,7 +85,9 @@ class Dog
 
   def self.find_by_name(name)
     sql = <<-SQL
-      SELECT * FROM dogs WHERE name = ?
+      SELECT * 
+      FROM dogs 
+      WHERE name = ?
     SQL
 
     DB[:conn].execute(sql, name).map do |row|
